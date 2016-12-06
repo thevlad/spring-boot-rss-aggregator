@@ -6,6 +6,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -23,7 +25,7 @@ public class AuthController {
 	private AuthenticationService authenticationService;
 
 	@RequestMapping(value = "/public/login", method = RequestMethod.POST)
-	public Map<String, ? extends Object> processLogin(@RequestBody RegistrationRequest loginRequest,
+	public ResponseEntity<Map<String, Object>> processLogin(@RequestBody RegistrationRequest loginRequest,
 			HttpServletRequest request, HttpServletResponse response) {
 
 		boolean success = false;
@@ -38,9 +40,9 @@ public class AuthController {
 		if (success) {
 			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 			UserDetailsWrapper user = (UserDetailsWrapper) authentication.getPrincipal();
-			return ResponseMap.mapOK("You are logged in as " + user.getUsername());
+			return new ResponseEntity<>(ResponseMap.mapOK("You are logged in as " + user.getUsername()), HttpStatus.OK);
 		} else {
-			return ResponseMap.mapError("Authentication failed! Please try again");
+			return new ResponseEntity<>(ResponseMap.mapError(msg), HttpStatus.BAD_REQUEST);
 		}
 
 	}
