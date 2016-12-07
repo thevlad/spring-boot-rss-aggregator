@@ -18,6 +18,8 @@
 ### Technologies used:
 - [spring-boot](http://projects.spring.io/spring-boot/)
 - [spring-integration](http://projects.spring.io/spring-integration/)
+- [spring-security](http://projects.spring.io/spring-security/)
+- [spring-session](http://projects.spring.io/spring-session/)
 - [spring-data-mongodb](http://projects.spring.io/spring-data-mongodb/)
 - [Flapdoodle Embedded MongoDB](http://github.com/flapdoodle-oss/embedmongo.flapdoodle.de)
 
