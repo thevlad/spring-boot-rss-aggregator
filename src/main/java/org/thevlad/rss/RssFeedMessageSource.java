@@ -69,55 +69,25 @@ public class RssFeedMessageSource implements MessageSource<List<SyndFeedWrapper>
 	// Arrays.asList("http://stackoverflow.com/feeds/tag?tagnames=rome",
 	// "http://rss.nytimes.com/services/xml/rss/nyt/Technology.xml");
 
-	private SyndFeed readFeed(String url) {
-		
+	private SyndFeed readFeed(String url) throws IOException, IllegalArgumentException, FeedException {
+
 		// fetch data from URL
 		SyndFeedInput input = new SyndFeedInput();
 		SyndFeed feed = null;
-		CloseableHttpClient httpClient = HttpClients.createDefault();
-		BufferedReader reader = null;
-		try {
-			reader = getResponseRSS(httpClient, url);
-			if (reader != null) {
-				feed = input.build(reader);
-			}
+		HttpGet httpGet = new HttpGet(url);
+		try (CloseableHttpClient httpClient = HttpClients.createDefault();
+				CloseableHttpResponse httpResponse = httpClient.execute(httpGet)) {
 
-		} catch (FeedException | IOException e) {
-
-			e.printStackTrace();
-		} finally {
-			if (reader != null) {
-				try {
-					reader.close();
-				} catch (IOException e) {
+			if (httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+				try (BufferedReader reader = new BufferedReader(
+						new InputStreamReader(httpResponse.getEntity().getContent()))) {
+					feed = input.build(reader);
 				}
 			}
-			try {
-				httpClient.close();
-			} catch (IOException e) {
-			}
-
 		}
+
 		return feed;
 
-	}
-
-	private  BufferedReader getResponseRSS(CloseableHttpClient httpClient, String url) throws IOException {
-
-	    HttpGet httpGet = new HttpGet(url);
-
-	    CloseableHttpResponse httpResponse = httpClient.execute(httpGet);
-
-	    BufferedReader reader;
-
-	    if (httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-	        reader = new BufferedReader(new InputStreamReader(httpResponse.getEntity().getContent()));
-	    } else {
-	    	logger.debug("Bad Http status {}", httpResponse.getStatusLine().toString());
-	        reader = null;
-	    }
-
-	    return reader;
 	}
 
 }
