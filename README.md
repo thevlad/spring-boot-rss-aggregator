@@ -9,7 +9,7 @@
 ### Run integration tests:
  `mvn intrgration-test`
 ### Run:
-`mvn spring-boot: run`
+`mvn spring-boot:run`
 
 ### How it works.
 ...
